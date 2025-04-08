@@ -43,6 +43,7 @@ if __name__ == '__main__':
         goal = get_cartesian(env)
         angles = get_angular(env) 
         pos = nn(angles) 
+        # compute the difference between actual positions as loss
         loss = torch.norm(pos-goal)
         print(loss)
         episode_over = terminated or truncated
