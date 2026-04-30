@@ -2,9 +2,40 @@ import gymnasium as gym
 from time import sleep
 from torch import nn
 import torch
+from torch.utils.data import Dataset, DataLoader 
 from numpy import sin, cos
 from math import ceil
 import matplotlib.pyplot as plt
+
+class MemBuffer(Dataset):
+    def __init__(self, size=0, max_size=1e3, dropout_size=None):
+        self.size = size
+        self.max_size = max_size
+        if dropout_size == None:
+            self.dropout = ceil(max_size/10)
+        else:
+            self.dropout = dropout_size
+
+        self.x = []
+        self.y = []
+
+    def __len__(self):
+        return self.size
+
+    def __getitem__(self, idx):
+        return self.x[idx], self.y[idx]
+
+    def add(self, x, y):
+        if self.size == self.max_size:
+            self.x = self.x[self.dropout:]
+            self.y = self.y[self.dropout:]
+        else:
+            self.size += 1
+
+        self.x.append(x)
+        self.y.append(y)
+        return
+
 
 def get_angular(env):
     return torch.tensor(env.unwrapped.state, dtype=torch.float)
@@ -30,8 +61,8 @@ class NN(nn.Module):
         self.env = env
 
         # add n_layers, layer_size, lr, n_iter, max_epochs
-        self.n_layers = n_layers
-        self.layer_size = layer_size
+        self.n_layers = 3
+        self.layer_size = 256
 
         # NN 
         self.nn = nn.Sequential(
@@ -65,6 +96,24 @@ def plot_losses(self):
 if __name__ == '__main__':
     # control params 
     max_it = 100
+
+    # mem buffer
+    bs = 2
+    buffer = MemBuffer(max_size=5)
+    
+    print('\n-------------- filling buffer')
+    for i in range(7):
+        buffer.add(i, i+100)
+        print(buffer.x, buffer.y)
+    
+    dl = DataLoader(dataset=buffer, batch_size=bs, shuffle=True, generator=torch.Generator(device='cpu'))
+
+    print('\n-------------- dataloading')
+    for i in range(3):
+        data = next(iter(dl))
+        print('data: ', data)
+
+        
 
     env = gym.make('Acrobot-v1', render_mode='human')
     observation, info = env.reset()
