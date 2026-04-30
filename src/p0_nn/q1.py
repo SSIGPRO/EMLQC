@@ -61,8 +61,8 @@ class NN(nn.Module):
         self.env = env
 
         # add n_layers, layer_size, lr, n_iter, max_epochs
-        self.n_layers = 3
-        self.layer_size = 256
+        self.n_layers = n_layers
+        self.layer_size = layer_size
 
         # NN 
         self.nn = nn.Sequential(
@@ -89,7 +89,16 @@ def train_epoch(self):
     return
 
 # add fn to print training and val losses
-def plot_losses(self):
+def plot_losses(self, losses):
+
+    plt.plot(losses)
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.title("Andamento della loss")
+    plt.yscale('log')
+    plt.grid(True)
+    plt.show()
+
     return
 
 
@@ -113,7 +122,7 @@ if __name__ == '__main__':
         data = next(iter(dl))
         print('data: ', data)
 
-        
+
 
     env = gym.make('Acrobot-v1', render_mode='human')
     observation, info = env.reset()
