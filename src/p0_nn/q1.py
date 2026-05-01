@@ -54,6 +54,10 @@ class NN(nn.Module):
         # define loss and optimizer for training
         self.loss_fn = nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
+        
+        # track losses for plotting
+        self.train_losses = []
+        self.val_losses = []
 
     def forward(self, x):
         return self.nn(x)
@@ -61,17 +65,79 @@ class NN(nn.Module):
 # -----------------------------------------------------
 # training functions
 
-# add train iter
-def train_iter(self):
-    return 
+def train_iter(self, x, y):
+    """Single training iteration: forward pass, loss computation, backward, step"""
+    self.train()
+    self.optimizer.zero_grad()
+    
+    # forward pass
+    output = self(x)
+    
+    # compute loss
+    loss = self.loss_fn(output, y)
+    
+    # backward pass and optimization step
+    loss.backward()
+    self.optimizer.step()
+    
+    return loss.item()
 
-# add train epoch
-def train_epoch(self):
-    return
 
-# add fn to print training and val losses
+def eval_iter(self, x, y):
+    """Evaluation iteration without weight update"""
+    self.eval()
+    with torch.no_grad():
+        output = self(x)
+        loss = self.loss_fn(output, y)
+    
+    return loss.item()
+
+
+def train_epoch(self, train_loader, val_loader=None):
+    """Train for one complete epoch"""
+    # training phase
+    train_loss_sum = 0.0
+    for _ in range(self.n_iter):
+        x_batch, y_batch = next(iter(train_loader))
+        loss = self.train_iter(x_batch, y_batch)
+        train_loss_sum += loss
+    
+    avg_train_loss = train_loss_sum / self.n_iter
+    self.train_losses.append(avg_train_loss)
+    
+    # validation phase
+    if val_loader is not None:
+        val_loss_sum = 0.0
+        num_batches = 0
+        for x_batch, y_batch in val_loader:
+            loss = self.eval_iter(x_batch, y_batch)
+            val_loss_sum += loss
+            num_batches += 1
+        
+        avg_val_loss = val_loss_sum / num_batches
+        self.val_losses.append(avg_val_loss)
+        
+        return avg_train_loss, avg_val_loss
+    
+    return avg_train_loss, None
+
+
 def plot_losses(self):
-    return
+    """Plot training and validation loss curves"""
+    plt.figure(figsize=(10, 6))
+    
+    if self.train_losses:
+        plt.plot(self.train_losses, label='Train Loss', marker='o')
+    
+    if self.val_losses:
+        plt.plot(self.val_losses, label='Validation Loss', marker='s')
+    
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss (MSE)')
+    plt.title('Training and Validation Losses')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.show()
 
 
 if __name__ == '__main__':
@@ -90,16 +156,50 @@ if __name__ == '__main__':
     sample_output = model(sample_input)
     print('Sample network output:', sample_output)
 
+    # collect training data from environment
+    print('\nCollecting training data...')
+    train_data_x = []
+    train_data_y = []
+    
     episode_over = False
     it = 0
     while (not episode_over) and (it < max_it):
-        action = env.action_space.sample()  # agent policy that uses the observation and info
+        action = env.action_space.sample()
         observation, reward, terminated, truncated, info = env.step(action)
 
         angles = get_angular(env)
         goal = get_cartesian(env)
+        
+        train_data_x.append(angles)
+        train_data_y.append(goal)
 
         episode_over = terminated or truncated
         it += 1
         sleep(0.15)
+    
+    # convert to tensors
+    train_x = torch.stack(train_data_x)
+    train_y = torch.stack(train_data_y)
+    print(f'Collected {len(train_x)} training samples')
+    
+    # training loop
+    print('\nTraining...')
+    for epoch in range(model.max_epochs):
+        total_loss = 0.0
+        for i in range(0, len(train_x), 8):
+            batch_x = train_x[i:i+8]
+            batch_y = train_y[i:i+8]
+            loss = model.train_iter(batch_x, batch_y)
+            total_loss += loss
+        
+        avg_loss = total_loss / ceil(len(train_x) / 8)
+        if (epoch + 1) % 10 == 0:
+            print(f'Epoch {epoch+1}/{model.max_epochs}, Loss: {avg_loss:.6f}')
+    
+    print('Training completed!')
+    print(f'Final train loss: {model.train_losses[-1]:.6f}')
+    
+    # plot losses
+    model.plot_losses()
+    
     env.close()
