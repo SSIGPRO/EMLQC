@@ -2,5 +2,6 @@ emlqc/
 *__pycache__*
 .idea
 .vs/
+*.vscode*
  
  
