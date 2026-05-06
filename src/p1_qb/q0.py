@@ -7,8 +7,8 @@ from qiskit import transpile
 from qiskit.primitives import StatevectorSampler
 
 if __name__ == '__main__':
-    qc = QC(1)
-    qc.initialize([1/sqrt(2),1/sqrt(2)], 0)
+    qc = QC(2)
+    qc.initialize([sqrt(1/10),sqrt(2/10),sqrt(3/10), sqrt(4/10)], [0,1])
     qc.draw(output="mpl", interactive=True)
     plt.show()
 
@@ -16,5 +16,5 @@ if __name__ == '__main__':
     sampler = StatevectorSampler()    
     job = sampler.run([qc_measured], shots=1000)
     result = job.result()
-    print(f" > Counts: {result[0].data["meas"].get_counts()}")
+    print(f" > Counts: {result[0].data['meas'].get_counts()}")
 
