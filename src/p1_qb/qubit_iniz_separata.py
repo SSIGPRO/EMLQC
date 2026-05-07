@@ -4,6 +4,7 @@ from qiskit import QuantumCircuit as QC
 from qiskit.primitives import StatevectorSampler
 
 if __name__ == '__main__':
+    
     qc = QC(2)
     
     num_samples = 5000
@@ -29,6 +30,6 @@ if __name__ == '__main__':
     for key in sorted(counts):
         print(f"{key}: {counts[key]}")
 
-    print("Valori percentuali:") #
+    print("Valori percentuali:") 
     for key in sorted(counts):
         print(f"{key}: {counts[key]/(num_samples/100):.2f}%")
