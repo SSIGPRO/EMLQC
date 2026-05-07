@@ -8,7 +8,9 @@ from qiskit.primitives import StatevectorSampler
 
 if __name__ == '__main__':
     qc = QC(2)
-    qc.initialize([sqrt(1/10),sqrt(2/10),sqrt(3/10), sqrt(4/10)], [0,1])
+    qc.initialize([sqrt(0.43),sqrt(0.57)], 0)
+    qc.initialize([sqrt(0.29),sqrt(0.71)], 1)
+    
     qc.draw(output="mpl", interactive=True)
     plt.show()
 
