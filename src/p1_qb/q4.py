@@ -12,8 +12,8 @@ from qiskit.visualization import plot_histogram
 
 if __name__ == '__main__':
     sampler = Sampler()    
-    c0 = np.sqrt(np.array([0.1, 0.9]))
-    c1 = np.sqrt(np.array([0.0, 1.0]))
+    c0 = np.sqrt(np.array([0.8, 0.2]))
+    c1 = np.sqrt(np.array([0.3, 0.7]))
 
     qc = QC(2, 2)
     qc.initialize(c0, 0)
@@ -31,4 +31,3 @@ if __name__ == '__main__':
     plot_histogram(counts)
     print(f" > Counts: {counts}")
     plt.show()
-
