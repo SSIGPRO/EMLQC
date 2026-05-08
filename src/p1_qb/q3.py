@@ -11,17 +11,21 @@ from qiskit.visualization import plot_histogram
 if __name__ == '__main__':
     sampler = StatevectorSampler()    
     coeffs = np.sqrt(np.array([0.1, 0.9]))
-    coeffs2 = np.array([1/sqrt(2), 1/sqrt(2)]) 
+    coeffs2 = np.array([1/sqrt(2), 1/sqrt(2)])
 
     qc = QC(2)
     qc.initialize(coeffs, 0)
     qc.initialize(coeffs2, 1)
+    
     qc.cx(1, 0) #qbit 1 controls qbit 0
-
+    qc.cx(0, 1)
+    qc.cx(1, 0)
     qc.draw(output="mpl", interactive=True)
     qc_measured = qc.measure_all(inplace=False)
 
     qc2 = QC(2)
+    qc.initialize(coeffs2, 0)
+    qc.initialize(coeffs, 1)
     qc2.initialize(np.sqrt([0.05, 0.45, 0.45, 0.05]))
     qc2.draw(output="mpl", interactive=True)
     qc2_measured = qc2.measure_all(inplace=False)
