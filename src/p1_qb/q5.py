@@ -12,7 +12,7 @@ if __name__ == '__main__':
     sampler = StatevectorSampler()    
     theta = (pi/4)
     coeffs = np.array([cos(theta/2), sin(theta/2)])
-    alpha = -theta + 2*asin(0.1+(sin(theta/2))**2)
+    alpha = 2 * asin(sqrt(0.1 + (sin(theta/2))**2)) - theta
 
     qc = QC(1)
     qc.initialize(coeffs, 0)
@@ -31,4 +31,3 @@ if __name__ == '__main__':
     print(f" > Counts: {result[0].data["meas"].get_counts()}")
     print(f" > Counts: {result[1].data["meas"].get_counts()}")
     plt.show()
-
