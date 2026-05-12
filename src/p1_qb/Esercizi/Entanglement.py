@@ -1,6 +1,5 @@
 from math import *
 
-import torch
 import numpy as np
 
 from matplotlib import pyplot as plt
@@ -12,8 +11,8 @@ from qiskit.visualization import plot_histogram
 
 if __name__ == '__main__':
     sampler = Sampler()    
-    c0 = np.sqrt(np.array([0.1, 0.9]))
-    c1 = np.sqrt(np.array([0.0, 1.0]))
+    c0 = np.sqrt(np.array([0.4, 0.6]))
+    c1 = np.sqrt(np.array([0, 1.0]))
 
     qc = QC(2, 2)
     qc.initialize(c0, 0)
@@ -23,7 +22,7 @@ if __name__ == '__main__':
     qc.measure(qubit=0, cbit=0)
     qc.draw(output="mpl", interactive=True)
 
-    job = sampler.run([qc], shots=1000)
+    job = sampler.run([qc], shots=1)
     result = job.result()
     print(result)
     print(result[0].data)
