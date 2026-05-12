@@ -34,3 +34,59 @@ if __name__ == '__main__':
     print(f" > Counts: {counts}")
     plt.show()
 
+
+    #inizializzazione dei due qubit per far vedere che lo swap ha funzionato (si sono scambiati gli stati dei qubit)
+    qc = QC(2,2)
+    qc.initialize(c0, 0)
+    qc.initialize(c1, 1)
+    qc.measure(qubit=1, cbit=1)
+    qc.measure(qubit=0, cbit=0)
+    qc.draw(output="mpl", interactive=True)
+
+    job = sampler.run([qc], shots=1000)
+    result = job.result()
+    print(result)
+    print(result[0].data)
+    counts = result[0].data['c'].get_counts()
+    plot_histogram(counts)
+    print(f" > Counts: {counts}")
+    plt.show()
+
+
+    #inizializzazione dei due qubit, al contrario, per far vedere che lo swap ha lo stesso effetto dell'inizializzazione dei due qubit al contrario
+    qc = QC(2,2)
+    qc.initialize(c1, 0)
+    qc.initialize(c0, 1)
+    qc.measure(qubit=1, cbit=1)
+    qc.measure(qubit=0, cbit=0)
+    qc.draw(output="mpl", interactive=True)
+
+    job = sampler.run([qc], shots=1000)
+    result = job.result()
+    print(result)
+    print(result[0].data)
+    counts = result[0].data['c'].get_counts()
+    plot_histogram(counts)
+    print(f" > Counts: {counts}")
+    plt.show()
+
+
+    #implementazione dello swap
+    qc = QC(2,2)
+    qc.initialize(c0, 0)
+    qc.initialize(c1, 1)
+    qc.cx(1,0)
+    qc.cx(0,1)
+    qc.cx(1,0)
+    qc.measure(qubit=1, cbit=1)
+    qc.measure(qubit=0, cbit=0)
+    qc.draw(output="mpl", interactive=True)
+
+    job = sampler.run([qc], shots=1000)
+    result = job.result()
+    print(result)
+    print(result[0].data)
+    counts = result[0].data['c'].get_counts()
+    plot_histogram(counts)
+    print(f" > Counts: {counts}")
+    plt.show()
