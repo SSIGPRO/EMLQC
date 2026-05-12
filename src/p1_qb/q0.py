@@ -14,7 +14,7 @@ if __name__ == '__main__':
     qc.draw(output="mpl", interactive=True)
     plt.show()
 
-    qc_measured = qc1.measure_all(inplace=False)
+    qc_measured = qc.measure_all(inplace=False)
     sampler = StatevectorSampler()    
     job = sampler.run([qc_measured], shots=1000)
     result = job.result()

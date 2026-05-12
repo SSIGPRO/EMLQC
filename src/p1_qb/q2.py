@@ -35,8 +35,8 @@ if __name__ == '__main__':
     job = sampler.run([qc_measured, qc2_measured, qc3_measured], shots=1000)
     result = job.result()
 
-    print(f" > Counts: {result[0].data["meas"].get_counts()}")
-    print(f" > Counts: {result[1].data["meas"].get_counts()}")
-    print(f" > Counts: {result[2].data["meas"].get_counts()}")
+    print(f" > Counts: {result[0].data['meas'].get_counts()}")
+    print(f" > Counts: {result[1].data['meas'].get_counts()}")
+    print(f" > Counts: {result[2].data['meas'].get_counts()}")
     plt.show()
 

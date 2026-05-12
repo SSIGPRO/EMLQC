@@ -24,7 +24,7 @@ if __name__ == '__main__':
     sampler = StatevectorSampler()    
     job = sampler.run([qc_measured], shots=1000)
     result = job.result()
-    print(f" > Counts: {result[0].data["meas"].get_counts()}")
+    print(f" > Counts: {result[0].data['meas'].get_counts()}")
     counts = result[0].data['meas'].get_counts()
     plot_histogram(counts)
     plt.show()
