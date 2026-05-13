@@ -11,7 +11,7 @@ from qiskit.visualization import plot_histogram
 if __name__ == "__main__":
     sampler = Sampler()
     c0 = np.sqrt(np.array([0.25, 0.75]))
-    c1 = np.sqrt(np.array([0.0, 1.0]))
+    c1 = np.sqrt(np.array([0.5, 0.5]))
 
     qc = QC(2, 2)
     qc.initialize(c0, 0)
