@@ -10,23 +10,37 @@ from qiskit.primitives import StatevectorSampler as Sampler
 from qiskit.visualization import plot_histogram, plot_bloch_multivector, plot_state_qsphere
 from qiskit.quantum_info import Statevector
 
+def get_qc(theta):
+    qc = QC(2, 1)
+    qc.x(1)
+    qc.barrier()
+                             
+    qc.h(0)
+    qc.barrier()
+    
+    qc.cp(2*pi*theta, 0, 1)
+    
+    qc.barrier()
+    qc.h(0)
+    return qc
+
 if __name__ == '__main__':
     sampler = Sampler()    
     shots = 1000
+    theta = 1/6
+   
+    qc1 = get_qc(theta)
+    qc2 = get_qc(theta)
+    qc2.measure(qubit=0, cbit=0)
 
-    qc = QC(2)
-    qc.h(0)
-    qc.h(1)
-    qc.cz(0, 1)
-    qc.draw(output="mpl", interactive=True)
-    qcm = qc.measure_all(inplace=False)
+    qc2.draw(output="mpl", interactive=True)
 
-    job = sampler.run([qcm], shots=shots)
+    job = sampler.run([qc2], shots=shots)
     results = job.result()
-    counts = results[0].data['meas'].get_counts()
+    counts = results[0].data['c'].get_counts()
     plot_histogram({k:c/shots for k, c in counts.items()})
-    print(f" > Counts: {counts}")
-    plot_bloch_multivector(Statevector(qc))
-    plot_state_qsphere(qc)
+
+    plot_bloch_multivector(Statevector(qc1))
+    plot_state_qsphere(qc1)
     plt.show()
 

@@ -6,48 +6,35 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from qiskit import QuantumCircuit as QC
-from qiskit import transpile
 from qiskit.primitives import StatevectorSampler as Sampler
 from qiskit.visualization import plot_histogram
 
-def f00(qc):
-    return
+from qutip import Bloch
 
-def f01(qc):
-    qc.cx(0, 1)
-    return
-
-def f10(qc):
-    qc.x(0)
-    qc.cx(0,1)
-    qc.x(0)
-    return
-
-def f11(qc):
-    qc.x(1)
-    return
+def plt_bloch(theta, phi):
+    b = Bloch()
+    b.clear()
+    v = [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)]
+    b.add_vectors(v)
+    return b
 
 if __name__ == '__main__':
     sampler = Sampler()    
-    
-    qcs = []
-    for foo in [f00, f01, f10, f11]:
-        qc = QC(2, 1)
-        qc.initialize([1.0, 0.0], 0)
-        qc.initialize([0.0, 1.0], 1)
-        qc.h(0)
-        qc.h(1)
-        foo(qc)
-        qc.h(0)
-        qc.measure(qubit=0,cbit=0)
-        qc.draw(output="mpl", interactive=True)
-        qcs.append(qc)
+    shots = 1000
+    theta = pi/2
+    phi = 0
 
-    job = sampler.run(qcs, shots=1000)
+    qc = QC(1)
+    qc.initialize([cos(theta/2), complex(cos(phi), sin(phi))*sin(theta/2)], 0)
+    b = plt_bloch(theta, phi)
+    qc.draw(output="mpl", interactive=True)
+    qcm = qc.measure_all(inplace=False)
+
+    job = sampler.run([qcm], shots=shots)
     results = job.result()
-    for res in results:
-        counts = res.data['c'].get_counts()
-        plot_histogram(counts)
-        print(f" > Counts: {counts}")
+    counts = results[0].data['meas'].get_counts()
+    plot_histogram({k:c/shots for k, c in counts.items()})
+    print(f" > Counts: {counts}")
+    b.show()
     plt.show()
 

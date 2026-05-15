@@ -16,6 +16,8 @@ if __name__ == '__main__':
 
     qc = QC(2)
     qc.h(0)
+    qc.h(1)
+    qc.z(0)
     qc.draw(output="mpl", interactive=True)
     qcm = qc.measure_all(inplace=False)
 
