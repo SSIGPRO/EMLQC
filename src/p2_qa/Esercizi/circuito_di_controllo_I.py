@@ -16,7 +16,6 @@ if __name__ == '__main__':
 
     qc = QC(2)
     qc.h(1)
-    qc.cx(0,1)
     qc.cz(0,1)
     qc.h(1)
     qc.draw(output="mpl", interactive=True)
