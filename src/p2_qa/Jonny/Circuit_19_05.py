@@ -13,7 +13,7 @@ from qiskit.visualization import plot_histogram
 def f0(qc):
     qc.ry(pi, 0)
     qc.cx(0, 1)
-    qc.ry((pi), 0)
+    qc.ry(pi, 0)
     return
 
 def f1(qc):
