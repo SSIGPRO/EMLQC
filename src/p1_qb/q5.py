@@ -39,6 +39,4 @@ if __name__ == '__main__':
     print(f" > Angolo calcolato alpha: {alpha:.4f} radianti")
     print(f" > Counts: {result[0].data['meas'].get_counts()}")
     print(f" > Counts: {result[1].data['meas'].get_counts()}")
-    
     plt.show()
-
