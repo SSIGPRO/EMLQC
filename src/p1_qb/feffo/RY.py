@@ -10,30 +10,22 @@ from qiskit import transpile
 from qiskit.primitives import StatevectorSampler as Sampler
 from qiskit.visualization import plot_histogram
 
-def f00(qc): #costant zero
+def f00(qc): 
 
     return 
 
-def f01(qc): #indentity 
-    qc.cx(0, 1) 
+def f01(qc):
+    qc.ry(pi/2, 1) 
 
     return
 
-def f10(qc): # c-not 
-    qc.cx(0,1)
-    qc.x(1)
-    
-    return
 
-def f11(qc): #costant one 
-    qc.x(1)
-    return
 
 if __name__ == '__main__':
     sampler = Sampler()    
     
     qcs = []
-    for foo in [f00, f01, f10, f11]:
+    for foo in [f00, f01]:
         qc = QC(2, 1)
         qc.initialize([1.0, 0.0], 0)
         qc.initialize([0.0, 1.0], 1)
@@ -69,7 +61,7 @@ from qiskit.primitives import StatevectorSampler as Sampler
 from qiskit.visualization import plot_histogram
 
 def f00(qc): #Hadamard costant zero
-    
+
     return 
 
 def f01(qc):  #rotation ry
