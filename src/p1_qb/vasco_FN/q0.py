@@ -20,19 +20,17 @@ if __name__ == '__main__':
     qc.cry(theta_cond1, 1, 0, ctrl_state='1')
 
     # Visualizzazione
-    print(qc.draw(output="mpl")) # Disegno veloce nel terminale
-    plt.show()
-
+    print(qc.draw(output="text")) # Disegno veloce nel terminale
+    
     # Esecuzione
     qc_measured = qc.measure_all(inplace=False)
-    sampler = StatevectorSampler()
+    sampler = StatevectorSampler()    
     job = sampler.run([qc_measured], shots=1000)
     result = job.result()
-
+    
     # Estrazione dei conteggi
     counts = result[0].data.meas.get_counts()
     print(f"\n > Counts finali (target 10, 20, 30, 40):")
     for stato in sorted(counts.keys()):
         percentuale = (counts[stato] / 1000) * 100
         print(f"Stato {stato}: {percentuale}%")
-

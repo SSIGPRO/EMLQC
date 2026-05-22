@@ -12,12 +12,13 @@ from qiskit.visualization import plot_histogram
 
 if __name__ == '__main__':
     sampler = Sampler()    
-    c0 = np.sqrt(np.array([0.1, 0.9]))
-    c1 = np.sqrt(np.array([0.0, 1.0]))
+    c0 = np.sqrt(np.array([0.7, 0.3]))
+    c1 = np.sqrt(np.array([0.2, 0.8]))
 
     qc = QC(2, 2)
-    qc.initialize(c0, 0)
-    qc.initialize(c1, 1)
+    qc.initialize((c0), 0)
+    qc.initialize((c1), 1)
+
     qc.cx(1,0)
     qc.measure(qubit=1, cbit=1)
     qc.measure(qubit=0, cbit=0)
