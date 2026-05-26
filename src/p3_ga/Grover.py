@@ -1,7 +1,7 @@
 from qiskit import QuantumCircuit as QC
 import numpy as np
 from qiskit.circuit.library import GroverOperator
-from qiskit.primitives import Sampler
+from qiskit.primitives 
 from math import floor, pi, sqrt
 
 
