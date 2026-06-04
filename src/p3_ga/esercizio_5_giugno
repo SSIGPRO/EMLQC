@@ -1,0 +1,52 @@
+import math
+from qiskit import QuantumCircuit
+from qiskit.circuit.library import GroverOperator
+from qiskit.primitives import StatevectorSampler
+
+def calculate_iterations(num_qubits):
+    total_states = 2 ** num_qubits
+    iterations = (math.pi / 4) * math.sqrt(total_states)
+    return math.floor(iterations)
+
+def create_oracle(target):
+    oracle = QuantumCircuit(2)
+    
+    if target[1] == '0':
+        oracle.x(0)
+    if target[0] == '0':
+        oracle.x(1)
+        
+    oracle.cz(0, 1)
+    
+    if target[1] == '0':
+        oracle.x(0)
+    if target[0] == '0':
+        oracle.x(1)
+        
+    return oracle
+
+def run_grover_search(target):
+    num_qubits = 2
+    
+    oracle = create_oracle(target)
+    grover_op = GroverOperator(oracle)
+    num_iters = calculate_iterations(num_qubits)
+    
+    qc = QuantumCircuit(num_qubits)
+    qc.h([0, 1]) 
+    
+    qc.compose(grover_op.power(num_iters), inplace=True)
+    qc.measure_all()
+    
+    sampler = StatevectorSampler()
+    job = sampler.run([qc], shots=1000)
+    
+    counts = job.result()[0].data["meas"].get_counts()
+    return counts, num_iters
+
+if __name__ == "__main__":
+    print("Starting Grover's Search for 2 Qubits...\n")
+    
+    for target in ["00", "01", "10", "11"]:
+        results, iterations = run_grover_search(target)
+        print(f"Target: {target} | Iterations: {iterations} | Results: {results}")
