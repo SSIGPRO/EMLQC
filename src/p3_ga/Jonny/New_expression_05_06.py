@@ -12,7 +12,7 @@ from qiskit.visualization import plot_histogram, plot_bloch_multivector
 
 from qiskit.circuit.library import GroverOperator, MCMTGate, ZGate
 from qiskit.circuit.library import DraperQFTAdder as Add
-from qiskit.circuit.library import UGate
+from qiskit.circuit.library import QuadraticFormGate as QFG
 
 def n_iters(nqb):
     ni = pi / (4 * asin(sqrt(1 / 2**nqb)))
@@ -20,42 +20,33 @@ def n_iters(nqb):
     return floor(ni)
 
 def get_oracle():
-    a = QuantumRegister(2, 'a')
+    a = QuantumRegister(1, 'a')
     b = QuantumRegister(2, 'b')
-    c = QuantumRegister(2, 'c')
 
-    qc = QC(*[a, b, c])
-
-    # make a = b'10 = d'2
-    qc.x(a[1])
+    qc = QC(*[a, b])
 
     # First H from marking 
     qc.h(b)
 
-    # make c = b'11b, d'3
-    qc.x(c[1])
-    qc.barrier() 
-    
-    #adder = Add(2, kind='fixed', name='Add')
-    suber0 = Add(2, kind='fixed', name='Sub').inverse()
-    u_gate = UGate(0, 0, 0).power(0.5, annotated= False)
-    suber1 = Add(2, kind='fixed', name='Sub').inverse()
-
-    qc.append(suber0, a[:]+b[:])
-    qc.append(u_gate, b[:])
-    qc.append(suber1, c[:]+b[:])
     qc.barrier() 
 
-    # if the a+b == c, the output (on qubits b will be 00)
-    # Invert phase on 00 
-    qc.x(b)
+    #Initialize the quadratic function
+    A= [[1]]
+    linear= [-2]
+    quadratic = QFG(2, A, linear)                            #Quadratic Form Gate
+
+    qc.append(quadratic, a[:]+b[:])
+    qc.barrier() 
+
+    # if (x-1)^2 == 1, the output (on qubits b) will be 00
+    # Split equally b[1] and invert phase on 00 in order to have 50% 0 and 50% 2 
+    qc.h(b[1])
     qc.compose(MCMTGate(ZGate(), 1, 1), b[:], inplace=True) 
     qc.x(b)
     qc.barrier()
 
     # uncompute f
-    qc.append(suber1.inverse(), c[:]+b[:])
-    qc.append(suber0.inverse(), a[:]+b[:])
+    qc.append(quadratic.inverse(), a[:]+b[:])
     # Last H from the marking
     qc.h(b)
     qc.barrier()
@@ -66,21 +57,21 @@ if __name__ == '__main__':
     nqb = 2
     ni = n_iters(nqb)
     print('niter: ', ni)
-    shots = 1000
+    shots = 10000
     sampler = Sampler()    
     
     # Grover's stuff
     oracle = get_oracle() 
-    grover_op = GroverOperator(oracle, reflection_qubits = [2, 3])
+    grover_op = GroverOperator(oracle, reflection_qubits = [1, 2])
     oracle.draw(output="mpl", interactive=True)
 
     # circuit
-    qc = QC(6, 2)
+    qc = QC(3, 2)
     
     qc.barrier()
     qc.compose(grover_op.power(ni), inplace=True)
     qc.barrier()
-    qc.measure([2, 3], [0, 1])
+    qc.measure([1, 2], [0, 1])
 
     qc.draw(output="mpl", interactive=True)
     
