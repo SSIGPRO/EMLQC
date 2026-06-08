@@ -1,6 +1,6 @@
+from math import ceil
 import torch
-from torch.utils.data import Dataset, DataLoader 
-from math import ceil 
+from torch.utils.data import Dataset, DataLoader
 
 class MemBuffer(Dataset):
     def __init__(self, size=0, max_size=1e3, dropout_size=None):
@@ -10,7 +10,6 @@ class MemBuffer(Dataset):
             self.dropout = ceil(max_size/10)
         else:
             self.dropout = dropout_size
-
         self.x = []
         self.y = []
 
@@ -26,7 +25,6 @@ class MemBuffer(Dataset):
             self.y = self.y[self.dropout:]
         else:
             self.size += 1
-
         self.x.append(x)
         self.y.append(y)
         return
@@ -34,14 +32,16 @@ class MemBuffer(Dataset):
 if __name__ == "__main__":
     bs = 2
     buffer = MemBuffer(max_size=5)
-    
     print('\n-------------- filling buffer')
     for i in range(7):
         buffer.add(i, i+100)
         print(buffer.x, buffer.y)
-    
-    dl = DataLoader(dataset=buffer, batch_size=bs, shuffle=True, generator=torch.Generator(device='cpu'))
-
+    dl = DataLoader(
+        dataset=buffer,
+        batch_size=bs,
+        shuffle=True,
+        generator=torch.Generator(device='cpu'),
+    )
     print('\n-------------- dataloading')
     for i in range(3):
         data = next(iter(dl))

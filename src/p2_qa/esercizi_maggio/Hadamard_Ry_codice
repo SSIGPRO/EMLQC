@@ -1,0 +1,58 @@
+from qiskit import QuantumCircuit as QC
+from qiskit.primitives import StatevectorSampler as Sampler
+from qiskit.visualization import plot_histogram
+from matplotlib import pyplot as plt
+import numpy as np
+
+def f_costante(qc):
+    qc.h(1)
+
+def f_bilanciata(qc):
+    theta = np.pi/3
+    qc.ry(theta, 0)
+    qc.cx(0, 1)
+    qc.ry(theta, 0)
+
+if __name__ == '__main__':
+    sampler = Sampler()
+    qcs = []
+    names = ["Oracolo costante", "oracolo bilanciato"]
+
+    for oracle in [f_costante, f_bilanciata]:
+        qc = QC(2, 1)
+        
+        qc.initialize([1.0, 0.0], 0)
+        qc.initialize([0.0, 1.0], 1)
+        
+        qc.h(0)
+        qc.h(1)
+        
+        oracle(qc)
+        
+        qc.h(0)
+        qc.measure(qubit=0, cbit=0)
+        qcs.append(qc)
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, 4))
+    fig.suptitle("circuiti algoritmo", fontsize=14)
+    for ax, qc, name in zip(axes.flat, qcs, names):
+        qc.draw(output="mpl", ax=ax)
+        ax.set_title(name, fontsize=10)
+    plt.tight_layout()
+
+    job = sampler.run(qcs, shots=1000)
+    results = job.result()
+
+    fig2, axes2 = plt.subplots(1, 2, figsize=(12, 4))
+    fig2.suptitle("risultati", fontsize=14)
+    for ax, res, name in zip(axes2.flat, results, names):
+        counts = res.data['c'].get_counts()
+        
+        result = max(counts, key=counts.get)
+        kind = "costante" if result == "0" else "Bilanciato"
+        
+        print(f"{name} -> {kind} (counts: {counts})")
+        plot_histogram(counts, ax=ax, title=f"{name}\n→ {kind}")
+        
+    plt.tight_layout()
+    plt.show()
