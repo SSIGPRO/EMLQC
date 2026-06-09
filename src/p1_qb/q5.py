@@ -14,7 +14,6 @@ if __name__ == '__main__':
     coeffs = np.array([cos(theta/2), sin(theta/2)])
 
     #incremento della probabilità del 10% (+0.1)
-    #Si usa la radice quadrata poiché la probabilità è il quadrato dell'ampiezza indotta dal seno
     alpha = -theta + 2*asin(sqrt(0.1+(sin(theta/2))**2))
 
 # Primo Circuito (Stato Iniziale)

@@ -1,6 +1,6 @@
 from math import *
 
-import numpy as np
+import numgit py as np
 
 from matplotlib import pyplot as plt
 

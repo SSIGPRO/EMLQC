@@ -41,8 +41,9 @@ for foo in [f00, f01, f10, f11]:
         qc.h(0)  
         qc.h(1) 
         
-        foo(qc)  # Applica una delle 4 funzioni
-        qc.h(0)  # Applica Hadamard (H) al primo qubit dopo la funzione
+        foo(qc)  
+        qc.h(0) 
+
         
         # Misura il primo qubit 0 nel bit classico 0, lasciando il secondo qubit 1 non misurato
         qc.measure(qubit=0, cbit=0) 
@@ -57,6 +58,6 @@ for foo in [f00, f01, f10, f11]:
          counts = res.data['c'].get_counts()
         plot_histogram(counts)
         
-        print(f" > Counts: {counts}") # Stampa i risultati (es. {'0': 500, '1': 500}), delle misurazioni
+        print(f" > Counts: {counts}")
         plt.show()
 

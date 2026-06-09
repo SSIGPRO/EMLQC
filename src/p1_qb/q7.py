@@ -55,9 +55,8 @@ def qpe_ry(frazione_theta, n_contatori=3, autovalore="+"):
     return circuito
 
 
-# ---------------------------------------------------------
 #  QPE PER HADAMARD
-# ---------------------------------------------------------
+
 def qpe_hadamard(n_contatori=3):
     circuito = QuantumCircuit(n_contatori + 1, n_contatori)
 
